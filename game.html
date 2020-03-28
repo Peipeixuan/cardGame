@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Card Game</title>
+    <script src="https://kit.fontawesome.com/15820b51b3.js" crossorigin="anonymous"></script>
+</head>
+<style>
+
+    body {
+        background-color: #031A23;
+    }
+
+    table {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    td {
+        background-size: contain;
+        width: 100px;
+        height: 100px;
+    }
+
+    input {
+        width: 100px;
+        height: 100px;
+        background-size: cover;
+        background-color: #FFFFFF;
+    }
+
+    .function:hover{
+        box-shadow: 0 12px 16px 0 rgba(0,0,0,0.50), 0 17px 50px 0 rgba(0,0,0,0.19);
+    }
+
+    .card {
+        transition: transform .3s;
+    }
+
+
+    .card:active {
+        transform: rotateY(180deg);
+    }
+
+    #pause, #replay, #timer {
+        font-size: 30px;
+        font-family: 微軟正黑體, serif;
+        color: white;
+        border-style: none;
+        background-color: #031A23;
+        height: 50px;
+
+
+    }
+
+    p {
+        font-size: 16px;
+        font-family: 微軟正黑體, serif;
+        color: white;
+        border-style: none;
+        background-color: #031A23;
+    }
+
+
+    div {
+        margin-left: auto;
+        margin-right: auto;
+        width: 400px;
+        height: 150px;
+
+    }
+
+    button {
+        width: 100px;
+        height: 100px;
+        background-size: cover;
+        background-color: #FFFFFF;
+        border: none;
+        border-radius: 4px;
+    }
+
+    .fa-disabled {
+        opacity: 1;
+        cursor: not-allowed;
+    }
+
+    i{
+        font-size: 36px;
+        color: #031A23;
+    }
+
+    i.blue{
+        color: #11727C;
+    }
+
+</style>
+<body>
+<div>
+    <p id="time">時間（秒）</p>
+    <input type="text" value="0" id="timer">
+    <input type="button" class="function" id="pause" value="暫停">
+    <input type="button" class="function" id="replay" value="重新">
+</div>
+<table>
+    <tr>
+        <td>
+            <button class="card" id="c11"></button>
+        </td>
+        <td>
+            <button class="card" id="c12"></button>
+
+        </td>
+        <td>
+            <button class="card" id="c13"></button>
+
+        </td>
+        <td>
+            <button class="card" id="c14"></button>
+
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <button class="card" id="c21"></button>
+
+        </td>
+        <td>
+            <button class="card" id="c22"></button>
+
+        </td>
+        <td>
+            <button class="card" id="c23"></button>
+
+        </td>
+        <td>
+            <button class="card" id="c24"></button>
+
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <button class="card" id="c31"></button>
+
+        </td>
+        <td>
+            <button class="card" id="c32"></button>
+
+        </td>
+        <td>
+            <button class="card" id="c33"></button>
+
+        </td>
+        <td>
+            <button class="card" id="c34"></button>
+
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <button class="card" id="c41"></button>
+
+        </td>
+        <td>
+            <button class="card" id="c42"></button>
+
+        </td>
+        <td>
+            <button class="card" id="c43"></button>
+
+        </td>
+        <td>
+            <button class="card" id="c44"></button>
+
+        </td>
+    </tr>
+</table>
+</body>
+<script>
+    var cardNum = ['<i class="fas fa-basketball-ball"><i>', 
+        '<i class="fas fa-air-freshener"></i>',
+        '<i class="fas fa-apple-alt"></i>', 
+        '<i class="fas fa-bone"></i>', 
+        '<i class="fas fa-baseball-ball"></i>', 
+        '<i class="fas fa-bowling-ball"></i>',
+        '<i class="fas fa-cannabis"></i>', 
+        '<i class="fas fa-bell"></i>',
+        '<i class="fas fa-basketball-ball"><i>', 
+        '<i class="fas fa-air-freshener"></i>', 
+        '<i class="fas fa-apple-alt"></i>', 
+        '<i class="fas fa-bone"></i>', 
+        '<i class="fas fa-baseball-ball"></i>', 
+        '<i class="fas fa-bowling-ball"></i>',
+        '<i class="fas fa-cannabis"></i>',
+        '<i class="fas fa-bell"></i>'];
+
+    var flipCard = new Array();
+    var flipNum = new Array();
+    var match = new Array();
+    var matchNum = new Array();
+    var stopTime = false;
+    var timer;
+    const element = document.getElementsByClassName("card");
+    const buttons = document.querySelectorAll('.card');
+    const buttonNodes = [...document.querySelectorAll('.card')]
+
+    buttonNodes.map(button =>button.innerHTML = '<i class="fas fa-crown blue" ></i>');
+
+    theTime = document.getElementById("timer");
+
+    function timeAdd() {
+        clearTimeout(timer);
+        theTime.value++;
+        timer = setTimeout("timeAdd()", 1000);
+    }
+
+    function startTime() {
+        if (document.getElementById("timer").value == 0) {
+            timer = setTimeout("timeAdd()", 1000);
+        }
+    }
+
+    document.getElementById("pause").onclick = function pause() {
+        var element = document.getElementsByClassName("card");
+        if (stopTime == false) {
+            clearTimeout(timer);
+            for (var i = 0; i < element.length; i++) {
+                element[i].disabled = true;
+            }
+            document.getElementById("pause").value = "繼續";
+            stopTime = true;
+        } else {
+            clearTimeout(timer);
+            timeAdd();
+            for (var i = 0; i < element.length; i++) {
+                element[i].disabled = false;
+            }
+            document.getElementById("pause").value = "暫停";
+            stopTime = false;
+        }
+    }
+
+
+    document.getElementById("c11").onclick = function () {
+        startTime();
+        console.log(this);
+        this.innerHTML = cardNum[0];
+        this.disabled = true;
+        flipCard.push(cardNum[0]);
+        flipNum.push('c11');
+
+        if (flipCard.length == 2) {
+            closeOther();
+            setTimeout("check()", 1105);
+        }
+    }
+    document.getElementById("c12").onclick = function () {
+        startTime();
+        this.innerHTML = cardNum[1];
+        document.getElementById('c12').disabled = true;
+        flipCard.push(cardNum[1]);
+        flipNum.push('c12');
+
+        if (flipCard.length == 2) {
+            closeOther();
+            setTimeout("check()", 1105);
+        }
+    };
+    document.getElementById("c13").onclick = function () {
+        startTime();
+        this.innerHTML = cardNum[2];
+        document.getElementById('c13').disabled = true;
+
+        flipCard.push(cardNum[2]);
+        flipNum.push('c13');
+
+        if (flipCard.length == 2) {
+            closeOther();
+            setTimeout("check()", 1105);
+        }
+    };
+    document.getElementById("c14").onclick = function () {
+        startTime();
+        this.innerHTML = cardNum[3];
+        document.getElementById('c14').disabled = true;
+
+        flipCard.push(cardNum[3]);
+        flipNum.push('c14');
+
+        if (flipCard.length == 2) {
+            closeOther();
+            setTimeout("check()", 1105);
+        }
+    };
+    document.getElementById("c21").onclick = function () {
+        startTime();
+        this.innerHTML = cardNum[4];
+        document.getElementById('c21').disabled = true;
+
+        flipCard.push(cardNum[4]);
+        flipNum.push('c21');
+
+        if (flipCard.length == 2) {
+            closeOther();
+            setTimeout("check()", 1105);
+        }
+    };
+    document.getElementById("c22").onclick = function () {
+        startTime();
+        this.innerHTML = cardNum[5];
+        document.getElementById('c22').disabled = true;
+
+        flipCard.push(cardNum[5]);
+        flipNum.push('c22');
+
+        if (flipCard.length == 2) {
+            closeOther();
+            setTimeout("check()", 1105);
+        }
+    };
+    document.getElementById("c23").onclick = function () {
+        startTime();
+        this.innerHTML = cardNum[6];
+        document.getElementById('c23').disabled = true;
+        flipCard.push(cardNum[6]);
+        flipNum.push('c23');
+
+        if (flipCard.length == 2) {
+            closeOther();
+            setTimeout("check()", 1105);
+        }
+
+    };
+    document.getElementById("c24").onclick = function () {
+        startTime();
+        this.innerHTML = cardNum[7];
+        document.getElementById('c24').disabled = true;
+        flipCard.push(cardNum[7]);
+        flipNum.push('c24');
+
+        if (flipCard.length == 2) {
+            closeOther();
+            setTimeout("check()", 1105);
+        }
+
+    };
+    document.getElementById("c31").onclick = function () {
+        startTime();
+        this.innerHTML = cardNum[8];
+        document.getElementById('c31').disabled = true;
+        flipCard.push(cardNum[8]);
+        flipNum.push('c31');
+
+        if (flipCard.length == 2) {
+            closeOther();
+            setTimeout("check()", 1105);
+        }
+
+    };
+    document.getElementById("c32").onclick = function () {
+        startTime();
+        this.innerHTML = cardNum[9];
+        document.getElementById('c32').disabled = true;
+        flipCard.push(cardNum[9]);
+        flipNum.push('c32');
+        if (flipCard.length == 2) {
+            closeOther();
+            setTimeout("check()", 1105);
+        }
+    };
+    document.getElementById("c33").onclick = function () {
+        startTime();
+        this.innerHTML = cardNum[10];
+        document.getElementById('c33').disabled = true;
+        flipCard.push(cardNum[10]);
+        flipNum.push('c33');
+
+        if (flipCard.length == 2) {
+            closeOther();
+            setTimeout("check()", 1105);
+        }
+    };
+
+    document.getElementById("c34").onclick = function () {
+        startTime();
+        this.innerHTML = cardNum[11];
+        document.getElementById('c34').disabled = true;
+        flipCard.push(cardNum[11]);
+        flipNum.push('c34');
+
+        if (flipCard.length == 2) {
+            closeOther();
+            setTimeout("check()", 1105);
+        }
+    };
+    document.getElementById("c41").onclick = function () {
+        startTime();
+        this.innerHTML = cardNum[12];
+        document.getElementById('c41').disabled = true;
+        flipCard.push(cardNum[12]);
+        flipNum.push('c41');
+
+        if (flipCard.length == 2) {
+            closeOther();
+            setTimeout("check()", 1105);
+        }
+    };
+    document.getElementById("c42").onclick = function () {
+        startTime();
+        this.innerHTML = cardNum[13];
+        document.getElementById('c42').disabled = true;
+        flipCard.push(cardNum[13]);
+        flipNum.push('c42');
+
+        if (flipCard.length == 2) {
+            closeOther();
+            setTimeout("check()", 1105);
+        }
+    };
+    document.getElementById("c43").onclick = function () {
+        startTime();
+        this.innerHTML = cardNum[14];
+        document.getElementById('c43').disabled = true;
+        flipCard.push(cardNum[14]);
+        flipNum.push('c43');
+
+        if (flipCard.length == 2) {
+            closeOther();
+            setTimeout("check()", 1105);
+        }
+    };
+    document.getElementById("c44").onclick = function () {
+        startTime();
+        this.innerHTML = cardNum[15];
+        document.getElementById('c44').disabled = true;
+        flipCard.push(cardNum[15]);
+        flipNum.push('c44');
+
+        if (flipCard.length == 2) {
+            closeOther();
+            setTimeout("check()", 1105);
+        }
+    };
+
+    function check() {
+
+        if (flipCard[0] == flipCard[1]) {
+            match.push(flipCard.pop());
+            match.push(flipCard.pop());
+            matchNum.push(flipNum.pop());
+            matchNum.push(flipNum.pop());
+            win();
+            console.log(matchNum.toString());
+
+
+        } else {
+
+            flipCard.pop();
+            flipCard.pop();
+            var wrong1 = flipNum.pop();
+            var wrong2 = flipNum.pop();
+            document.getElementById(wrong1).innerHTML = '<i class="fas fa-crown blue"></i>';
+            document.getElementById(wrong2).innerHTML = '<i class="fas fa-crown blue"></i>';
+            document.getElementById(wrong1).disabled = false;
+            document.getElementById(wrong2).disabled = false;
+
+        }
+        openOther();
+
+    }
+
+    function closeOther() {
+        for (var i = 0; i < element.length; i++) {
+            element[i].disabled = true;
+        }
+    }
+
+    function openOther() {
+        for (var i = 0; i < element.length; i++) {
+            element[i].disabled = false;
+        }
+
+    }
+
+    function win() {
+        if (matchNum.length == 16) {
+            alert("You win!\n" + "You take " + theTime.value + " sec");
+            clearTimeout(timer);
+            document.getElementById("pause").disabled = true;
+        }
+    }
+
+    function shuffle(arr) {
+        var i, j, temp;
+        for (i = arr.length - 1; i > 0; i--) {
+            j = Math.floor(Math.random() * (i + 1));
+            temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+        }
+        return arr;
+    }
+
+    document.getElementById("replay").onclick = function replay() {
+        var element = document.getElementsByClassName("card");
+        for (var i = 0; i < element.length; i++) {
+            buttonNodes.map(button =>{
+                button.innerHTML = '<i class="fas fa-crown"></i>';
+                button.disabled = false;
+                
+            })
+        }
+
+        //clearTimeout(timer);
+        theTime.value = 0;
+        cardNum = shuffle(cardNum);
+        match.length = 0;
+        matchNum.length = 0;
+        document.getElementById("pause").disabled = false;
+
+    }
+
+
+</script>
+</html>
